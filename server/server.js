@@ -16,13 +16,15 @@ io.on("connection",(socket)=>{ //this listens to the connection event(when a cli
   socket.emit('newMessage',generateMessage("Admin","Welcome to the chat app"));
   socket.broadcast.emit('newMessage',generateMessage("Admin","New user joined the chatroom"))
 
-  socket.on('createMessage',(message)=>{
+  socket.on('createMessage',(message, callback)=>{
     console.log('Created a new message ', message);
-    socket.broadcast.emit('newMessage',generateMessage(message.from, message.text))
+    io.emit('newMessage',generateMessage(message.from, message.text))
+    callback()
   })
+
   socket.on('disconnect', (reason) => {
     console.log('User disconnected because ' + reason);
-    socket.broadcast.emit('newMessage',generateMessage("Admin","New user left the chatroom"))
+    socket.broadcast.emit('newMessage',generateMessage("Admin","User left the chatroom"))
   });
 })
 const port = process.env.PORT || 3000;
