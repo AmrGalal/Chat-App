@@ -1,7 +1,7 @@
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
-const {generateMessage} = require('./utils/message');
+const {generateMessage,generateLocationMessage} = require('./utils/message');
 var app = express();
 var server = http.createServer(app)
 const publicPath = process.env.PWD + '/public';
@@ -20,6 +20,11 @@ io.on("connection",(socket)=>{ //this listens to the connection event(when a cli
     console.log('Created a new message ', message);
     io.emit('newMessage',generateMessage(message.from, message.text))
     callback()
+  })
+
+  socket.on('createLocationMessage',(coords)=>{
+    console.log('Created a new location message ', coords);
+    io.emit('newLocationMessage',generateLocationMessage("Admin", coords.lat,coords.long))
   })
 
   socket.on('disconnect', (reason) => {
